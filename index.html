@@ -1013,6 +1013,7 @@ const Icon = {
   Calendar: (p)=> <Stroke {...p}><rect x="4" y="6" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></Stroke>,
   Settings: (p)=> <Stroke {...p}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></Stroke>,
   Share: (p)=> <Stroke {...p}><path d="M7 17l10-12M5 21h14"/><circle cx="17" cy="5" r="2"/></Stroke>,
+  Link: (p)=> <Stroke {...p}><path d="M9 15l6-6"/><path d="M8 13l-2.5 2.5a3.5 3.5 0 0 0 5 5L13 18"/><path d="M16 11l2.5-2.5a3.5 3.5 0 0 0-5-5L11 6"/></Stroke>,
   Heart: (p)=> <Stroke {...p}><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></Stroke>,
   Trophy: (p)=> <Stroke {...p}><path d="M7 4h10v5a5 5 0 1 1-10 0V4z"/><path d="M5 6H3v2a3 3 0 0 0 3 3M19 6h2v2a3 3 0 0 1-3 3M9 21h6M12 16v5"/></Stroke>,
   Users: (p)=> <Stroke {...p}><circle cx="9" cy="9" r="3.5"/><path d="M2.5 20c.5-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="7.5" r="2.5"/><path d="M16 14c2.5.3 4.5 2.5 5 6"/></Stroke>,
@@ -2542,8 +2543,7 @@ const ContactAvatar = ({ contact, size=48 }) => (
   }}>{contact.name[0]}</div>
 );
 
-const Connect = ({ onOpen, onRedeem, appLink, myEmail, circle, onAddFriend }) => {
-  const [inviteOpen, setInviteOpen] = useState(false);
+const Connect = ({ onOpen, onRedeem, appLink, myEmail, circle, onAddFriend, inviteOpen, setInviteOpen }) => {
   const [code, setCode] = useState('');
   const [note, setNote] = useState('');
   const [query, setQuery] = useState('');
@@ -2577,7 +2577,7 @@ const Connect = ({ onOpen, onRedeem, appLink, myEmail, circle, onAddFriend }) =>
             display:'flex', alignItems:'center', justifyContent:'center',
             boxShadow:'inset 0 1px 0 rgba(255,255,255,.7), 0 10px 22px -10px rgba(120,80,60,.25)',
           }}>
-            <Icon.Share size={34} color="var(--pink)" stroke={1.8}/>
+            <Icon.Link size={34} color="var(--pink)" stroke={1.8}/>
           </div>
           <div style={{ fontSize:20, fontWeight:800, marginTop:16, letterSpacing:-.3 }}>challenges are better together</div>
           <div style={{ fontSize:13.5, color:'var(--ink-2)', marginTop:6, maxWidth:272, marginLeft:'auto', marginRight:'auto', lineHeight:1.45 }}>
@@ -2700,8 +2700,6 @@ const Connect = ({ onOpen, onRedeem, appLink, myEmail, circle, onAddFriend }) =>
           onClose={()=>setInviteOpen(false)}
         />
       )}
-
-      <FloatingFab onClick={()=>setInviteOpen(true)} label="invite"/>
     </div>
   );
 };
@@ -3085,9 +3083,8 @@ const PhotoAdjustSheet = ({ src, onSave, onClose }) => {
   );
 };
 
-const Profile = ({ onEdit, onLogout, onReset, onEditAccount, onCreate, onSeeGarden, ratings={}, joined=[] }) => {
+const Profile = ({ onEditAccount, onCreate, onSeeGarden, ratings={}, joined=[] }) => {
   const { profile, setProfile } = useProfile();
-  const [confirmReset, setConfirmReset] = useState(false);
   const name = profile?.name || 'you';
   const initial = (name[0] || 'Y').toUpperCase();
   const handle = '@' + (profile?.username || name.toLowerCase().replace(/\s+/g,''));
@@ -3132,12 +3129,12 @@ const Profile = ({ onEdit, onLogout, onReset, onEditAccount, onCreate, onSeeGard
         padding:'14px 22px 14px',
         display:'flex', justifyContent:'space-between', alignItems:'center',
       }}>
-        <button onClick={onEdit} style={{ width:36, height:36, borderRadius:18, background:'var(--card)', display:'flex', alignItems:'center', justifyContent:'center', border:'1px solid var(--line)' }}>
+        <button onClick={onEditAccount} style={{ width:36, height:36, borderRadius:18, background:'var(--card)', display:'flex', alignItems:'center', justifyContent:'center', border:'1px solid var(--line)' }}>
           <Icon.Settings size={18}/>
         </button>
         <div style={{ fontWeight:700 }}>you</div>
         <button onClick={()=>setShareOpen(true)} style={{ width:36, height:36, borderRadius:18, background:'var(--card)', display:'flex', alignItems:'center', justifyContent:'center', border:'1px solid var(--line)' }}>
-          <Icon.Share size={18}/>
+          <Icon.Link size={18}/>
         </button>
       </div>
 
@@ -3313,78 +3310,6 @@ const Profile = ({ onEdit, onLogout, onReset, onEditAccount, onCreate, onSeeGard
         </div>
       )}
 
-      {/* account / log out */}
-      <div style={{ padding:'18px 22px 0' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)', letterSpacing:.3 }}>ACCOUNT</div>
-          <button onClick={onEditAccount} style={{ fontSize:12.5, fontWeight:700, color:'var(--pink)' }}>edit</button>
-        </div>
-        {profile?.email && (
-          <button onClick={onEditAccount} style={{
-            width:'100%', textAlign:'left',
-            background:'var(--card)', borderRadius:16, padding:'14px',
-            display:'flex', alignItems:'center', gap:12, marginBottom:10,
-          }}>
-            <div style={{
-              width:38, height:38, borderRadius:12, flex:'none',
-              background:'var(--pink-4)', color:'var(--pink)',
-              display:'flex', alignItems:'center', justifyContent:'center',
-            }}><Icon.Mail size={18} stroke={2.2}/></div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:13.5, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{profile.email}</div>
-              <div style={{ fontSize:11.5, color:'var(--ink-2)' }}>signed in · your login email</div>
-            </div>
-            <Icon.Forward size={16} color="var(--muted)"/>
-          </button>
-        )}
-        {profile?.phone && (
-          <button onClick={onEditAccount} style={{
-            width:'100%', textAlign:'left',
-            background:'var(--card)', borderRadius:16, padding:'14px',
-            display:'flex', alignItems:'center', gap:12, marginBottom:10,
-          }}>
-            <div style={{
-              width:38, height:38, borderRadius:12, flex:'none',
-              background:'var(--pink-4)', color:'var(--pink)',
-              display:'flex', alignItems:'center', justifyContent:'center',
-            }}><Icon.Phone size={18} stroke={2.2}/></div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:13.5, fontWeight:700 }}>{profile.phone}</div>
-              <div style={{ fontSize:11.5, color:'var(--ink-2)' }}>phone on file</div>
-            </div>
-            <Icon.Forward size={16} color="var(--muted)"/>
-          </button>
-        )}
-        <button onClick={onLogout} style={{
-          width:'100%', background:'var(--card)', borderRadius:16, padding:'15px',
-          display:'flex', alignItems:'center', justifyContent:'center', gap:8,
-          fontSize:14.5, fontWeight:700, color:'#C65B72',
-          boxShadow:'inset 0 1px 0 rgba(255,255,255,.5)',
-        }}>
-          <Icon.Back size={17} color="#C65B72"/> log out
-        </button>
-        <div style={{ fontSize:11, color:'var(--muted)', textAlign:'center', marginTop:10 }}>
-          your data stays saved to {profile?.email || 'your account'} — log back in anytime.
-        </div>
-
-        {/* Start over — wipe everything and begin fresh */}
-        <button
-          onClick={()=>{ if(confirmReset){ onReset && onReset(); } else { setConfirmReset(true); setTimeout(()=>setConfirmReset(false), 4000); } }}
-          style={{
-            width:'100%', background: confirmReset ? '#C65B72' : 'transparent',
-            border: confirmReset ? 'none' : '1px solid var(--line)',
-            borderRadius:16, padding:'13px', marginTop:16,
-            display:'flex', alignItems:'center', justifyContent:'center', gap:8,
-            fontSize:13.5, fontWeight:700, color: confirmReset ? '#fff' : 'var(--muted)',
-          }}>
-          {confirmReset
-            ? <><Icon.X size={16} color="#fff"/> tap again to erase everything</>
-            : 'start over — erase all data'}
-        </button>
-        <div style={{ fontSize:11, color:'var(--muted)', textAlign:'center', marginTop:8 }}>
-          permanently deletes every account, challenge & garden on this device.
-        </div>
-      </div>
     </div>
   );
 };
@@ -4258,12 +4183,14 @@ window.CreateFlow = CreateFlow;
 
 // ===== auth.jsx =====
 // Edit email + phone for the signed-in account (bottom sheet).
-const AccountEditSheet = ({ profile, onSave, onClose }) => {
+const AccountEditSheet = ({ profile, onSave, onClose, onLogout, onReset, onEditProfile }) => {
   const [animIn, setAnimIn] = useState(false);
+  const [username, setUsername] = useState(profile?.username || '');
   const [email, setEmail] = useState(profile?.email || '');
   const [digits, setDigits] = useState(String(profile?.phone || '').replace(/\D/g,'').replace(/^1/,'').slice(0,10));
   const [bio, setBio] = useState(profile?.bio || '');
   const [saving, setSaving] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   useEffect(()=>{ const t=setTimeout(()=>setAnimIn(true),10); return ()=>clearTimeout(t); },[]);
   const close = () => { setAnimIn(false); setTimeout(onClose, 220); };
 
@@ -4276,13 +4203,16 @@ const AccountEditSheet = ({ profile, onSave, onClose }) => {
   };
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const phoneValid = digits.length === 10;
-  const valid = emailValid && phoneValid;
+  const usernameClean = normUsername(username);
+  const usernameAvailable = isUsernameAvailable(usernameClean, profile?.email);
+  const usernameValid = usernameClean.length >= 3 && usernameAvailable;
+  const valid = emailValid && phoneValid && usernameValid;
   const emailChanged = email.trim().toLowerCase() !== String(profile?.email||'').toLowerCase();
 
   const save = () => {
     if(!valid || saving) return;
     setSaving(true);
-    onSave({ email: email.trim().toLowerCase(), phone: '+1 ' + fmt(digits), bio: bio.trim() });
+    onSave({ username: usernameClean, email: email.trim().toLowerCase(), phone: '+1 ' + fmt(digits), bio: bio.trim() });
   };
 
   return (
@@ -4295,7 +4225,7 @@ const AccountEditSheet = ({ profile, onSave, onClose }) => {
       <div onClick={e=>e.stopPropagation()} style={{
         width:'100%', background:'var(--bg)',
         borderTopLeftRadius:28, borderTopRightRadius:28,
-        display:'flex', flexDirection:'column', overflow:'hidden',
+        maxHeight:'88%', display:'flex', flexDirection:'column', overflow:'hidden',
         transform: animIn ? 'translateY(0)' : 'translateY(100%)',
         transition:'transform .28s cubic-bezier(.22,.9,.34,1)',
       }}>
@@ -4304,7 +4234,7 @@ const AccountEditSheet = ({ profile, onSave, onClose }) => {
         </div>
 
         <div style={{ padding:'10px 22px 6px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ fontSize:18, fontWeight:800, letterSpacing:-.3 }}>edit account</div>
+          <div style={{ fontSize:18, fontWeight:800, letterSpacing:-.3 }}>settings</div>
           <button onClick={close} style={{
             width:34, height:34, borderRadius:17, background:'var(--card)',
             display:'flex', alignItems:'center', justifyContent:'center',
@@ -4312,8 +4242,39 @@ const AccountEditSheet = ({ profile, onSave, onClose }) => {
           }}><Icon.X size={16}/></button>
         </div>
 
-        <div style={{ padding:'10px 22px 0' }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)', marginBottom:8, letterSpacing:.3 }}>EMAIL</div>
+        <div className="scroll" style={{ padding:'10px 22px 0', overflowY:'auto', flex:1, minHeight:0 }}>
+          <button onClick={onEditProfile} style={{
+            width:'100%', textAlign:'left', background:'var(--card)', borderRadius:16, padding:'13px 14px',
+            display:'flex', alignItems:'center', gap:10, marginBottom:18,
+          }}>
+            <div style={{
+              width:34, height:34, borderRadius:11, flex:'none', background:'var(--pink-4)', color:'var(--pink)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+            }}><Icon.Spark size={16} stroke={2.2}/></div>
+            <div style={{ flex:1, fontSize:13.5, fontWeight:700 }}>edit name, photo &amp; interests</div>
+            <Icon.Forward size={16} color="var(--muted)"/>
+          </button>
+
+          <div style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)', marginBottom:8, letterSpacing:.3 }}>USERNAME</div>
+          <div style={{
+            background:'var(--card)', borderRadius:16, padding:'4px 6px',
+            display:'flex', alignItems:'center', gap:2,
+            boxShadow:'inset 0 1px 0 rgba(255,255,255,.55)',
+          }}>
+            <span style={{ padding:'0 0 0 10px', fontSize:16, fontWeight:700, color:'var(--ink-2)' }}>@</span>
+            <input
+              value={username}
+              onChange={e=>setUsername(normUsername(e.target.value))}
+              maxLength={20} autoCapitalize="none" autoCorrect="off"
+              placeholder="username"
+              style={{ flex:1, border:'none', outline:'none', background:'transparent', fontSize:16, fontWeight:600, padding:'13px 10px 13px 2px' }}
+            />
+          </div>
+          <div style={{ fontSize:11.5, color: (usernameClean.length>=3 && !usernameAvailable) ? 'var(--pink)' : 'var(--ink-2)', marginTop:6 }}>
+            {usernameClean.length===0 ? ' ' : usernameClean.length<3 ? 'at least 3 characters' : !usernameAvailable ? 'that username is taken' : 'available'}
+          </div>
+
+          <div style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)', margin:'18px 0 8px', letterSpacing:.3 }}>EMAIL</div>
           <div style={{
             background:'var(--card)', borderRadius:16, padding:'4px 6px',
             display:'flex', alignItems:'center', gap:8,
@@ -4373,9 +4334,40 @@ const AccountEditSheet = ({ profile, onSave, onClose }) => {
             />
             <div style={{ textAlign:'right', fontSize:11, color:'var(--ink-2)' }}>{bio.length}/150</div>
           </div>
+
+          <div style={{ height:1, background:'var(--line)', margin:'22px 0 18px' }}/>
+
+          <button onClick={onLogout} style={{
+            width:'100%', background:'var(--card)', borderRadius:16, padding:'15px',
+            display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+            fontSize:14.5, fontWeight:700, color:'#C65B72',
+            boxShadow:'inset 0 1px 0 rgba(255,255,255,.5)',
+          }}>
+            <Icon.Back size={17} color="#C65B72"/> log out
+          </button>
+          <div style={{ fontSize:11, color:'var(--muted)', textAlign:'center', marginTop:10 }}>
+            your data stays saved to {profile?.email || 'your account'} — log back in anytime.
+          </div>
+
+          <button
+            onClick={()=>{ if(confirmReset){ onReset && onReset(); } else { setConfirmReset(true); setTimeout(()=>setConfirmReset(false), 4000); } }}
+            style={{
+              width:'100%', background: confirmReset ? '#C65B72' : 'transparent',
+              border: confirmReset ? 'none' : '1px solid var(--line)',
+              borderRadius:16, padding:'13px', marginTop:16,
+              display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+              fontSize:13.5, fontWeight:700, color: confirmReset ? '#fff' : 'var(--muted)',
+            }}>
+            {confirmReset
+              ? <><Icon.X size={16} color="#fff"/> tap again to erase everything</>
+              : 'start over — erase all data'}
+          </button>
+          <div style={{ fontSize:11, color:'var(--muted)', textAlign:'center', margin:'8px 0 20px' }}>
+            this wipes every challenge, photo, and account on this device.
+          </div>
         </div>
 
-        <div style={{ padding:'16px 22px 30px' }}>
+        <div style={{ padding:'14px 22px 26px', borderTop:'1px solid var(--line)' }}>
           <button onClick={save} disabled={!valid || saving} className={valid && !saving ? 'btn-primary':''} style={{
             width:'100%', padding:'16px', borderRadius:18,
             background: valid ? 'var(--pink)' : 'var(--pink-3)',
@@ -5292,6 +5284,7 @@ const App = () => {
 
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingAccount, setEditingAccount] = useState(false);
+  const [connectInviteOpen, setConnectInviteOpen] = useState(false);
   const [tab, setTab] = useState('discover');
   const [detailId, setDetailId] = useState(null);   // open challenge id
   const [creating, setCreating] = useState(false);  // create modal open
@@ -5398,9 +5391,9 @@ const App = () => {
     setAuthState(null);
   };
   // account to the new email key (it's the account identity) and update the session.
-  const handleSaveAccount = ({ email, phone, bio }) => {
+  const handleSaveAccount = ({ username, email, phone, bio }) => {
     const oldEmail = auth;
-    const newProfile = { ...profile, email, phone, bio };
+    const newProfile = { ...profile, username, email, phone, bio };
     if(email && email !== oldEmail){
       try {
         saveAccount(email, {
@@ -5411,10 +5404,10 @@ const App = () => {
         });
         if(oldEmail) localStorage.removeItem(acctKey(oldEmail));
         localStorage.setItem('bloom:session', email);
-        if(profile?.username) registerUsername(profile.username, email, newProfile.name, newProfile.photo);
       } catch {}
       setAuthState(email);
     }
+    if(username) registerUsername(username, email || oldEmail, newProfile.name, newProfile.photo);
     setAuthPhone(phone);
     setProfileState(newProfile);
     setEditingAccount(false);
@@ -5541,8 +5534,9 @@ const App = () => {
   else if(tab==='mine') screen = <Mine onOpen={openChallenge} onCreate={()=>setCreating(true)} joined={joined} ratings={ratings}/>;
   else if(tab==='connect') screen = <Connect onOpen={openChallenge}
     onRedeem={redeemCode} appLink={APP_INVITE_LINK} myEmail={auth} circle={circle}
-    onAddFriend={(r)=>{ const c = registerContact({ name:r.name, username:r.username, photo:r.photo }); addToCircle(c.id); }}/>;
-  else if(tab==='profile') screen = <Profile onEdit={()=>setEditingProfile(true)} onLogout={handleLogout} onReset={handleReset} onEditAccount={()=>setEditingAccount(true)} onCreate={()=>setCreating(true)} onSeeGarden={(items,n)=>setGardenView({items,completed:n})} ratings={ratings} joined={joined}/>;
+    onAddFriend={(r)=>{ const c = registerContact({ name:r.name, username:r.username, photo:r.photo }); addToCircle(c.id); }}
+    inviteOpen={connectInviteOpen} setInviteOpen={setConnectInviteOpen}/>;
+  else if(tab==='profile') screen = <Profile onEditAccount={()=>setEditingAccount(true)} onCreate={()=>setCreating(true)} onSeeGarden={(items,n)=>setGardenView({items,completed:n})} ratings={ratings} joined={joined}/>;
 
   // Auth gate — email login before anything else
   if(!auth){
@@ -5589,6 +5583,7 @@ const App = () => {
         {/* FAB on discover too */}
         {tab==='discover' && !gardenView && <FloatingFab onClick={()=>setCreating(true)}/>}
         {tab==='profile'  && !gardenView && <FloatingFab onClick={()=>setCreating(true)}/>}
+        {tab==='connect'  && !gardenView && <FloatingFab onClick={()=>setConnectInviteOpen(true)} label="invite"/>}
 
         {/* Detail overlay */}
         {detailId && (
@@ -5694,6 +5689,9 @@ const App = () => {
             profile={profile}
             onSave={handleSaveAccount}
             onClose={()=>setEditingAccount(false)}
+            onLogout={handleLogout}
+            onReset={handleReset}
+            onEditProfile={()=>{ setEditingAccount(false); setEditingProfile(true); }}
           />
         )}
 
